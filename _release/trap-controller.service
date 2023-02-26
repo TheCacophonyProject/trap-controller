@@ -1,0 +1,14 @@
+
+[Unit]
+Description=Cacophony Project Trap Controller
+After=multi-user.target
+
+[Service]
+Type=simple
+ExecStart=/usr/bin/trap-controller
+
+Restart=on-failure
+RestartSec=5s
+
+[Install]
+WantedBy=multi-user.target

@@ -1,0 +1,41 @@
+project_name: trap-controller
+
+release:
+  github:
+    owner: TheCacophonyProject
+    name: trap-controller
+  name_template: '{{.Tag}}'
+
+builds:
+- goos:
+  - linux
+  goarch:
+  - arm
+  goarm:
+  - "7"
+  main: ./cmd/trap-controller
+  ldflags: -s -w -X main.version={{.Version}}
+  binary: trap-controller
+
+nfpms:
+- vendor: The Cacophony Project
+  homepage: http://cacophony.org.nz/
+  maintainer: Cacophony Developers <coredev@cacophony.org.nz>
+  description: Trap controller
+  license: GPL v3.0
+  file_name_template: "{{ .ProjectName }}_{{ .Version }}_{{ .Arch }}"
+  formats:
+    - deb
+  bindir: /usr/bin
+  contents:
+    - src: _release/trap-controller.service
+      dst: /etc/systemd/system/trap-controller.service
+    - src: _release/org.cacophony.TrapController.conf
+      dst: /etc/dbus-1/system.d/org.cacophony.TrapController.conf
+  scripts:
+    postinstall: "_release/postinstall.sh"
+
+checksum:
+  name_template: '{{ .ProjectName }}_{{ .Version }}_checksums.txt'
+
+dist: dist
