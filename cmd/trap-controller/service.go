@@ -72,7 +72,7 @@ func (s service) SetTrapPower(power bool) *dbus.Error {
 	return nil
 }
 
-func (s service) TriggerTrap() *dbus.Error {
+func (s service) TriggerTrap(detailsRaw string) *dbus.Error {
 
 	details := map[string]interface{}{}
 	if err := json.Unmarshal([]byte(detailsRaw), &details); err != nil {
