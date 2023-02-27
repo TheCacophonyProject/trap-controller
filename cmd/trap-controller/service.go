@@ -72,6 +72,13 @@ func (s service) SetTrapPower(power bool) *dbus.Error {
 	return nil
 }
 
+func (s service) SetIRLightsPower(power bool) *dbus.Error {
+	if err := setIRLightsPower(power); err != nil {
+		return dbusErr(err)
+	}
+	return nil
+}
+
 func (s service) TriggerTrap(detailsRaw string) *dbus.Error {
 
 	details := map[string]interface{}{}

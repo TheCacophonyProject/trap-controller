@@ -36,6 +36,7 @@ import (
 const (
 	powerTrapPin   = "GPIO27"
 	triggerTrapPin = "GPIO10"
+	irLightsPin    = "GPIO18"
 )
 
 var version = "No version provided"
@@ -75,17 +76,19 @@ func runMain() error {
 		return err
 	}
 
-	host.Init()
-	trapPower := gpioreg.ByName(powerTrapPin)
-	log.Println("powering on trap")
-	trapPower.Out(gpio.High)
-	triggerTrap := gpioreg.ByName(triggerTrapPin)
-	triggerTrap.Out(gpio.Low)
+	if err := setIRLightsPower(true); err != nil {
+		return err
+	}
+	if err := setTrapPower(true); err != nil {
+		return err
+	}
+	if err := setPin(triggerTrapPin, false); err != nil {
+		return err
+	}
 
 	return nil
 }
 
-//TODO add option to pass classification data that caused trigger.
 func triggerTrap(details map[string]interface{}) error {
 	log.Println("triggering trap")
 	host.Init()
@@ -109,6 +112,24 @@ func triggerTrap(details map[string]interface{}) error {
 }
 
 func setTrapPower(power bool) error {
+	if power {
+		log.Println("powering on trap")
+	} else {
+		log.Println("powering off trap")
+	}
+	return setPin(powerTrapPin, power)
+}
+
+func setIRLightsPower(power bool) error {
+	if power {
+		log.Println("powering on IR lights")
+	} else {
+		log.Println("powering off IR lights")
+	}
+	return setPin(irLightsPin, power)
+}
+
+func setPin(pinStr string, power bool) error {
 	host.Init()
 	var gpioLevel gpio.Level
 	if power {
@@ -116,12 +137,13 @@ func setTrapPower(power bool) error {
 	} else {
 		gpioLevel = gpio.Low
 	}
-	trapPower := gpioreg.ByName(powerTrapPin)
-	if trapPower == nil {
-		return errors.New("failed to get pin to set trap power")
+	pin := gpioreg.ByName(pinStr)
+	if pin == nil {
+		return fmt.Errorf("failed to get pin '%s'", pinStr)
 	}
-	if err := trapPower.Out(gpioLevel); err != nil {
-		return fmt.Errorf("failed to write to trap power pin, %e", err)
+	if err := pin.Out(gpioLevel); err != nil {
+		return fmt.Errorf("failed write to pin '%s'", pinStr)
 	}
 	return nil
+
 }
