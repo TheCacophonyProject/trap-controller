@@ -3,7 +3,6 @@ module github.com/TheCacophonyProject/trap-controller
 go 1.17
 
 require (
-	github.com/TheCacophonyProject/event-reporter v1.3.1
 	github.com/TheCacophonyProject/event-reporter/v3 v3.3.0
 	github.com/TheCacophonyProject/go-config v1.8.3
 	github.com/alexflint/go-arg v1.4.3
